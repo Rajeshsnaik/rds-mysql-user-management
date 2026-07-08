@@ -1,31 +1,84 @@
-# 🚀 DynamoDB User Management
+# 🚀 RDS MySQL User Management
 
-A simple **User Management** application built with **Next.js (App Router)**, **Tailwind CSS**, and **Amazon DynamoDB**.
+A simple **User Management Application** built using **Next.js (App Router)**, **Tailwind CSS**, and **Amazon RDS for MySQL**.
 
-This project demonstrates how to perform **Create** and **Read** operations using **Amazon DynamoDB** without using MongoDB or any SQL database.
+This project demonstrates how to build a full-stack application where user information is stored in a **managed relational database (Amazon RDS MySQL)** instead of NoSQL databases.
+
+The application allows users to:
+
+- Create new users
+- Store username, email, and phone number
+- Fetch and display all users from Amazon RDS MySQL
 
 ---
 
-## 📌 Features
+# 📌 Features
 
 - ✅ Next.js App Router
+- ✅ React.js Frontend
 - ✅ Tailwind CSS UI
-- ✅ Amazon DynamoDB Integration
-- ✅ AWS SDK v3
-- ✅ Create User
-- ✅ View All Users
+- ✅ Amazon RDS MySQL Database
+- ✅ MySQL Database Connection
 - ✅ REST API using Next.js Route Handlers
-- ✅ Environment Variables
+- ✅ Create User API
+- ✅ Get All Users API
+- ✅ Environment Variable Configuration
 - ✅ Clean Project Structure
 
 ---
 
-## 📂 Project Structure
+# 🏗️ Application Architecture
 
 ```text
-dynamodb-user-management
+User
+ │
+ ▼
+Next.js Frontend
+ │
+ ▼
+Next.js API Route
+(/api/users)
+ │
+ ▼
+MySQL Connection
+(mysql2)
+ │
+ ▼
+Amazon RDS MySQL
+ │
+ ▼
+Users Table
+```
+
+---
+
+# 🛠️ Technologies Used
+
+## Frontend
+
+- Next.js
+- React.js
+- Tailwind CSS
+
+## Backend
+
+- Next.js Route Handlers
+- Node.js
+- mysql2 package
+
+## Database
+
+- Amazon RDS MySQL
+
+---
+
+# 📂 Project Structure
+
+```text
+mysql-user-management
 │
 ├── app
+│   │
 │   ├── api
 │   │   └── users
 │   │       └── route.js
@@ -40,8 +93,11 @@ dynamodb-user-management
 │   ├── layout.js
 │   └── page.js
 │
+├── database
+│   └── schema.sql
+│
 ├── lib
-│   └── dynamodb.js
+│   └── db.js
 │
 ├── .env.local
 ├── package.json
@@ -50,67 +106,166 @@ dynamodb-user-management
 
 ---
 
-# 📷 Application Workflow
-
-```text
-User
-   │
-   ▼
-Next.js Frontend
-   │
-   ▼
-API Route (/api/users)
-   │
-   ▼
-Amazon DynamoDB
-   │
-   ▼
-Response
-   │
-   ▼
-Frontend Updates
-```
-
----
-
-# 🛠 Technologies Used
-
-- Next.js (App Router)
-- React.js
-- Tailwind CSS
-- Amazon DynamoDB
-- AWS SDK v3
-- JavaScript
-
----
-
 # ⚙️ Prerequisites
 
 Before running this project, make sure you have:
 
-- Node.js (v18 or later)
+- Node.js v18+
 - npm
 - AWS Account
-- AWS IAM User
-- Amazon DynamoDB Table
+- Amazon RDS MySQL Instance
+- MySQL Client / MySQL Workbench
 
 ---
 
-# 📥 Clone Repository
+# ☁️ AWS RDS MySQL Setup
 
-```bash
-git clone https://github.com/YOUR_USERNAME/dynamodb-user-management.git
+## Step 1: Create RDS MySQL Database
+
+Go to:
+
+```text
+AWS Console
+        ↓
+Amazon RDS
+        ↓
+Create Database
 ```
 
-Go to the project directory.
+Choose:
 
-```bash
-cd dynamodb-user-management
+```text
+Engine:
+MySQL
 ```
 
 ---
 
-# 📦 Install Dependencies
+## Recommended Configuration
+
+### Database Settings
+
+```text
+DB Instance Identifier:
+user-management-db
+```
+
+Example:
+
+```text
+Username:
+admin
+```
+
+Create a strong password.
+
+---
+
+### Connectivity
+
+Enable:
+
+```text
+Public Access:
+Yes
+```
+
+for learning/demo purposes.
+
+---
+
+## Step 2: Configure Security Group
+
+After creating RDS:
+
+Go to:
+
+```text
+RDS
+ ↓
+Security Group
+ ↓
+Inbound Rules
+```
+
+Add:
+
+```text
+Type:
+MYSQL/Aurora
+
+Protocol:
+TCP
+
+Port:
+3306
+
+Source:
+Your IP Address
+```
+
+Example:
+
+```text
+MYSQL/Aurora
+TCP
+3306
+xxx.xxx.xxx.xxx/32
+```
+
+---
+
+# 🗄️ Database Setup
+
+Connect to your RDS MySQL instance using:
+
+- MySQL Workbench
+- MySQL CLI
+- Any MySQL client
+
+---
+
+## Create Database and Table
+
+SQL file location:
+
+```text
+database/schema.sql
+```
+
+Execute:
+
+```sql
+CREATE DATABASE user_management;
+
+USE user_management;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+# 📦 Install Project Dependencies
+
+Clone the repository:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/mysql-user-management.git
+```
+
+Navigate:
+
+```bash
+cd mysql-user-management
+```
+
+Install packages:
 
 ```bash
 npm install
@@ -118,129 +273,111 @@ npm install
 
 ---
 
-# ☁️ Create DynamoDB Table
+# 📦 Install MySQL Package
 
-Login to the AWS Console.
+Install MySQL driver:
 
-Navigate to
-
-```text
-Amazon DynamoDB
+```bash
+npm install mysql2
 ```
-
-Click
-
-```text
-Create Table
-```
-
-Use the following configuration.
-
-| Property      | Value  |
-| ------------- | ------ |
-| Table Name    | users  |
-| Partition Key | id     |
-| Type          | String |
-
-Keep all other settings as default and click **Create Table**.
 
 ---
 
-# 🔐 Create IAM User
+# 🔐 Environment Variables
 
-Go to
-
-```text
-AWS Console
-→ IAM
-→ Users
-→ Create User
-```
-
-Give a username.
-
-Example
-
-```text
-dynamodb-demo-user
-```
-
-Attach permissions.
-
-For learning purposes, you may attach:
-
-```text
-AmazonDynamoDBFullAccess
-```
-
-Create the user.
-
----
-
-# 🔑 Create Access Keys
-
-Open the IAM User.
-
-Go to
-
-```text
-Security Credentials
-```
-
-Click
-
-```text
-Create Access Key
-```
-
-Choose
-
-```text
-Command Line Interface (CLI)
-```
-
-Download or copy the
-
-- Access Key ID
-- Secret Access Key
-
-Store them securely.
-
----
-
-# 🌎 Create Environment Variables
-
-Create a file named
+Create:
 
 ```text
 .env.local
 ```
 
-Add the following.
+Add:
 
 ```env
-AWS_REGION=us-east-1
+DB_HOST=YOUR_RDS_ENDPOINT
 
-AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY
+DB_PORT=3306
 
-AWS_SECRET_ACCESS_KEY=YOUR_SECRET_KEY
+DB_NAME=user_management
 
-DYNAMODB_TABLE=users
+DB_USER=admin
+
+DB_PASSWORD=YOUR_DATABASE_PASSWORD
 ```
 
-Replace the values with your own AWS credentials.
+Example:
 
-> Never commit this file to GitHub.
+```env
+DB_HOST=user-db.xxxxxx.us-east-1.rds.amazonaws.com
+DB_PORT=3306
+DB_NAME=user_management
+DB_USER=admin
+DB_PASSWORD=password123
+```
 
 ---
 
-# ▶️ Run the Project
+# ⚠️ Important
+
+Never commit:
+
+```text
+.env.local
+```
+
+to GitHub.
+
+Add it to:
+
+```text
+.gitignore
+```
+
+Example:
+
+```text
+.env.local
+node_modules
+.next
+```
+
+---
+
+# 🔌 Database Connection
+
+The database connection is handled inside:
+
+```text
+lib/db.js
+```
+
+Example:
+
+```javascript
+import mysql from "mysql2/promise";
+
+const db = mysql.createPool({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+});
+
+export default db;
+```
+
+---
+
+# ▶️ Run the Application
+
+Start development server:
 
 ```bash
 npm run dev
 ```
 
-Open
+Open:
 
 ```text
 http://localhost:3000
@@ -248,29 +385,57 @@ http://localhost:3000
 
 ---
 
-# 🧪 Test the Application
+# 🧪 Application Flow
 
-Enter
+## Create User
 
-- Username
-- Email
-- Phone Number
+Enter:
 
-Click
+```text
+Username
+Email
+Phone Number
+```
+
+Click:
 
 ```text
 Save User
 ```
 
-The data will be stored inside the DynamoDB table.
+Data flow:
 
-Click
+```text
+Form
+ ↓
+POST /api/users
+ ↓
+MySQL INSERT Query
+ ↓
+Amazon RDS MySQL
+```
+
+---
+
+## View Users
+
+Click:
 
 ```text
 View All Users
 ```
 
-All records from DynamoDB will be displayed.
+Data flow:
+
+```text
+GET /api/users
+ ↓
+SELECT Query
+ ↓
+Amazon RDS MySQL
+ ↓
+Display Users
+```
 
 ---
 
@@ -278,48 +443,59 @@ All records from DynamoDB will be displayed.
 
 ## Create User
 
+### Endpoint
+
 ```http
 POST /api/users
 ```
 
-Request Body
+Request:
 
 ```json
 {
-  "username": "Virat",
-  "email": "virat18@gmail.com",
+  "username": "Rajesh",
+  "email": "rajesh@gmail.com",
   "phoneNumber": "9876543210"
 }
 ```
 
-Response
+SQL Query:
 
-```json
-{
-  "success": true,
-  "message": "User saved successfully."
-}
+```sql
+INSERT INTO users
+(username,email,phone_number)
+VALUES (?, ?, ?);
 ```
 
 ---
 
 ## Get All Users
 
+### Endpoint
+
 ```http
 GET /api/users
 ```
 
-Response
+SQL Query:
+
+```sql
+SELECT *
+FROM users
+ORDER BY id DESC;
+```
+
+Response:
 
 ```json
 {
   "success": true,
   "users": [
     {
-      "id": "...",
-      "username": "Virat",
-      "email": "virat18@gmail.com",
-      "phoneNumber": "9876543210"
+      "id": 1,
+      "username": "Rajesh",
+      "email": "rajesh@gmail.com",
+      "phone_number": "9876543210"
     }
   ]
 }
@@ -327,14 +503,27 @@ Response
 
 ---
 
-# 📸 Screenshots
+# 🧪 Testing Database Connection
 
-Add screenshots here.
+Connect to MySQL:
 
-```text
-Home Page
+```bash
+mysql \
+-h YOUR_RDS_ENDPOINT \
+-u admin \
+-p
+```
 
-User List Page
+Select database:
+
+```sql
+USE user_management;
+```
+
+View users:
+
+```sql
+SELECT * FROM users;
 ```
 
 ---
@@ -345,10 +534,24 @@ User List Page
 - Delete User
 - Search Users
 - Pagination
-- Form Validation
-- Toast Notifications
-- Loading Spinner
-- Server-side Validation
+- Authentication
+- AWS Secrets Manager Integration
+- Database Migration
+- Production Deployment
+- Docker Support
+
+---
+
+# 🔄 DynamoDB vs RDS MySQL
+
+| Feature        | DynamoDB             | RDS MySQL      |
+| -------------- | -------------------- | -------------- |
+| Database Type  | NoSQL                | Relational     |
+| Data Format    | Key-Value / Document | Tables & Rows  |
+| Query Language | DynamoDB API         | SQL            |
+| Schema         | Flexible             | Fixed          |
+| Relationships  | Limited              | Supported      |
+| Scaling        | Automatic            | Instance Based |
 
 ---
 
@@ -356,11 +559,21 @@ User List Page
 
 Contributions are welcome.
 
-1. Fork the repository.
-2. Create a feature branch.
-3. Commit your changes.
-4. Push the branch.
-5. Open a Pull Request.
+Steps:
+
+```bash
+git clone repository
+
+create new branch
+
+make changes
+
+commit changes
+
+push branch
+```
+
+Create a Pull Request.
 
 ---
 
@@ -372,4 +585,4 @@ This project is licensed under the MIT License.
 
 # ⭐ Support
 
-If you found this project helpful, consider giving it a ⭐ on GitHub.
+If this project helped you understand **Amazon RDS MySQL with Next.js**, consider giving the repository a ⭐.
