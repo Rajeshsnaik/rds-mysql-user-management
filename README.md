@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🚀 RDS MySQL User Management
 
 A simple **User Management Application** built using **Next.js (App Router)**, **Tailwind CSS**, and **Amazon RDS for MySQL**.
@@ -586,3 +587,6 @@ This project is licensed under the MIT License.
 # ⭐ Support
 
 If this project helped you understand **Amazon RDS MySQL with Next.js**, consider giving the repository a ⭐.
+=======
+# rds-mysql-user-management
+>>>>>>> 4209de9b027253caf99d15179f39659ab3193606
